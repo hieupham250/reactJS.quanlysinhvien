@@ -9,6 +9,9 @@ interface Student {
 }
 
 export default function AddStudent() {
+  const [students, setStudents] = useState(
+    JSON.parse(localStorage.getItem("Students") || "[]")
+  );
   const [student, setStudent] = useState<Student>({
     id: "",
     name: "",
@@ -21,6 +24,28 @@ export default function AddStudent() {
     const value = e.target.value;
     setStudent({ ...student, [name]: value });
   };
+  const handleClick = () => {
+    if (
+      student.id.trim() === "" ||
+      student.name.trim() === "" ||
+      student.dayOfBirth.trim() === "" ||
+      student.email.trim() === ""
+    ) {
+      alert("Vui lòng điền đầy đủ thông tin.");
+      return;
+    }
+    const updatedStudents = [...students, student]; // Thêm đối tượng student vào mảng students
+    setStudents(updatedStudents); // Cập nhật state của students
+    localStorage.setItem("Students", JSON.stringify(updatedStudents)); // Lưu mảng students lên localStorage
+    setStudent({
+      id: "",
+      name: "",
+      dayOfBirth: "",
+      email: "",
+      status: true,
+    });
+  };
+
   return (
     <>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -59,17 +84,33 @@ export default function AddStudent() {
                 <div className="modal-body">
                   <form action="">
                     <label htmlFor="">Mã Sinh viên</label>
-                    <input name="id" onChange={handleChange} type="text" />
+                    <input
+                      name="id"
+                      value={student.id}
+                      onChange={handleChange}
+                      type="text"
+                    />
                     <label htmlFor="">Tên sinh viên</label>
-                    <input name="name" onChange={handleChange} type="text" />
+                    <input
+                      name="name"
+                      value={student.name}
+                      onChange={handleChange}
+                      type="text"
+                    />
                     <label htmlFor="">Ngày sinh</label>
                     <input
                       name="dayOfBirth"
+                      value={student.dayOfBirth}
                       onChange={handleChange}
                       type="date"
                     />
                     <label htmlFor="">Email</label>
-                    <input name="email" onChange={handleChange} type="email" />
+                    <input
+                      name="email"
+                      value={student.email}
+                      onChange={handleChange}
+                      type="email"
+                    />
                   </form>
                 </div>
                 <div className="modal-footer">
@@ -80,7 +121,12 @@ export default function AddStudent() {
                   >
                     Hủy
                   </button>
-                  <button type="button" className="btn btn-primary">
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={handleClick}
+                    data-bs-dismiss="modal"
+                  >
                     Thêm mới
                   </button>
                 </div>
